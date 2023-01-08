@@ -18,6 +18,13 @@ app.post("/sign-up", (req, res) => {
 })
 
 app.post("/tweets", (req, res) => {
+    if (!req.body?.username && !req.headers.user) {
+        return res.status(400).send(this.errorFieldsRequired);
+    }
+
+    if (!req.body?.tweet) {
+        return res.status(400).send(this.errorFieldsRequired);
+    }
     const {tweet} = req.body
     const username = req.headers.user ? req.body.user : req.headers.user
     const findUser = users.find(item => item.username == tweet.username)
