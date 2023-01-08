@@ -14,6 +14,15 @@ app.post("/sign-up", (req, res) => {
     res.status(201).send("OK")
 })
 
+app.post("/tweets", (req, res) => {
+    const buscaUser = users.find(item => item.username == req.body.username)
+    if (buscaUser) {
+        tweets.push(req.body)
+        res.status(201).send("OK")
+    }
+    res.status(401).send("UNAUTHORIZED")
+
+})
 
 app.listen(PORT, () => {
     console.log("Servidor Online na porta " + PORT)
