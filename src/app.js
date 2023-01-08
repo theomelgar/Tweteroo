@@ -19,9 +19,12 @@ app.post("/sign-up", (req, res) => {
 
 app.post("/tweets", (req, res) => {
     const newTweet = req.body
+    const username = req.headers.user ? req.body.user : req.headers.user
     const findUser = users.find(item => item.username == newTweet.username)
     if (findUser) {
-        if (!newTweet || !newTweet.username || !newTweet.tweet || typeof newTweet.tweet != "string") return res.status(400).send("Todos os campos são obrigatórios!")
+        if (!newTweet || username || !newTweet.tweet || typeof newTweet.tweet != "string" || typeof username != "string") {
+            return res.status(400).send("Todos os campos são obrigatórios!")
+        }
         const id = tweets.length + 1
         const avatar = findUser.avatar
         newTweet.avatar = avatar
@@ -34,12 +37,14 @@ app.post("/tweets", (req, res) => {
 })
 
 app.get("/tweets", (req, res) => {
-    const { page } = req.query.page
+    const page = req.query.page
+    const tweetsMax = 10
+    const start = tweetsMax * page
     if (page) {
-        if (page == 0) res.status(400).send("Informe uma página válida!")
-        else res.status(200).send(tweets.slice(-10 * page).reverse())
+        if (page == 0) return res.status(400).send("Informe uma página válida!")
+        else return res.status(200).send(tweets.slice(start - tweetsMax, start).reverse())
     } else {
-        res.status(200).send(tweets.slice(-10).reverse())
+        return res.status(200).send(tweets.slice(-tweetsMax).reverse())
     }
 })
 
