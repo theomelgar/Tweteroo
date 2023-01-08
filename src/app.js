@@ -12,18 +12,21 @@ let tweets = []
 
 app.post("/sign-up", (req, res) => {
     const user = req.body
+    if(!user || !user.username || !user.avatar ) return res.status(400).send("Todos os campos são obrigatórios!")
     users.push(user)
     res.status(201).send("OK")
 })
 
 app.post("/tweets", (req, res) => {
-    const buscaUser = users.find(item => item.username == req.body.username)
-    if (buscaUser) {
+    const newTweet = req.body
+    const findUser = users.find(item => item.username == newTweet.username)
+    if (findUser) {
+        if(!newTweet || !newTweet.username || !newTweet.tweet) return res.status(400).send("Todos os campos são obrigatórios!")
         const id = tweets.length + 1
-        const avatar = buscaUser.avatar
-        req.body.avatar = avatar
-        req.body.id = id
-        tweets.push(req.body)
+        const avatar = findUser.avatar
+        newTweet.avatar = avatar
+        newTweet.id = id
+        tweets.push(newTweet)
         res.status(201).send("OK")
     }
     res.status(401).send("UNAUTHORIZED")
