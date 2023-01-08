@@ -25,35 +25,45 @@ app.post("/tweets", (req, res) => {
     if (!req.body?.tweet) {
         return res.status(400).send("Todos os campos são obrigatórios!");
     }
-    const {tweet} = req.body
-    const username = req.headers.user ? req.body.user : req.headers.user
-    const findUser = users.find(item => item.username == tweet.username)
-    if (findUser) {
-        if (typeof username !== 'string' || typeof tweet !== 'string') {
-            return res.status(400).send("Todos os campos são obrigatórios!")
-        }
-        const id = tweets.length + 1
-        const avatar = findUser.avatar
-        const newTweet = {username, tweet}
-        newTweet.avatar = avatar
-        tweet.id = id
-        tweets.push(newTweet)
-        res.status(201).send("OK")
-    }
-    res.status(401).send("UNAUTHORIZED")
 
+    const { tweet } = req.body;
+
+    const username = req.headers.user ? req.headers.user : req.body.username;
+
+    if (typeof username !== "string" || typeof tweet !== "string") {
+        return res.sendStatus(400);
+    }
+
+    if (!users.find(user => user.username === username)) {
+        return res.status(401).send("UNAUTHORIZED");
+    }
+
+    const newTweet = { username, tweet };
+    tweets.push(newTweet);
+    return res.status(201).send("OK");
 })
 
 app.get("/tweets", (req, res) => {
-    const page = req.query.page
-    const tweetsMax = 10
-    const start = tweetsMax * page
-    if (page) {
-        if (page == 0) return res.status(400).send("Informe uma página válida!")
-        else return res.status(200).send(tweets.slice(start - tweetsMax, start).reverse())
-    } else {
-        return res.status(200).send(tweets.slice(-tweetsMax).reverse())
+    if (typeof req.query.page === "string") {
+        if (req.query.page <= 0 || isNaN(req.query.page)) {
+            return res.status(400).send("Informe uma página válida!");
+        }
+        const page = req.query.page
+        const tweetsMax = 10
+        const start = tweetsMax * page
+        const lastTenTweets = tweets.slice(start - tweetsMax, start);
+        const lastTweets = lastTenTweets.map(tweet => {
+            const user = users.find(user => user.username === tweet.username);
+            return { ...tweet, avatar: user.avatar };
+        });
+        return res.status(200).send(lastTweets);
     }
+    const lastTenTweets = tweets.slice(-10);
+    const lastTweets = lastTenTweets.map(tweet => {
+        const user = users.find(user => user.username === tweet.username);
+        return { ...tweet, avatar: user.avatar };
+    });
+    return res.status(200).send(lastTweets);
 })
 
 app.get("/tweets/:USERNAME", (res, req) => {
