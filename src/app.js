@@ -18,17 +18,18 @@ app.post("/sign-up", (req, res) => {
 })
 
 app.post("/tweets", (req, res) => {
-    const newTweet = req.body
+    const {tweet} = req.body
     const username = req.headers.user ? req.body.user : req.headers.user
-    const findUser = users.find(item => item.username == newTweet.username)
+    const findUser = users.find(item => item.username == tweet.username)
     if (findUser) {
-        if (!newTweet || username || !newTweet.tweet || typeof newTweet.tweet != "string" || typeof username != "string") {
+        if (!tweet || username || !tweet || typeof tweet != "string" || typeof username != "string") {
             return res.status(400).send("Todos os campos são obrigatórios!")
         }
         const id = tweets.length + 1
         const avatar = findUser.avatar
+        const newTweet = {username, tweet}
         newTweet.avatar = avatar
-        newTweet.id = id
+        tweet.id = id
         tweets.push(newTweet)
         res.status(201).send("OK")
     }
