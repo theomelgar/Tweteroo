@@ -34,11 +34,17 @@ app.post("/tweets", (req, res) => {
 })
 
 app.get("/tweets", (req, res) => {
-    res.send(tweets.slice(-10).reverse())
+    const { page } = req.query.page
+    if (page) {
+        if (page == 0) res.status(400).send("Informe uma página válida!")
+        else res.status(200).send(tweets.slice(-10 * page).reverse())
+    } else {
+        res.status(200).send(tweets.slice(-10).reverse())
+    }
 })
 
 app.get("/tweets/:USERNAME", (res, req) => {
-    const filterUser = tweets.filter( tweet => tweet.username === parseInt(req.params.USERNAME));
+    const filterUser = tweets.filter(tweet => tweet.username === parseInt(req.params.USERNAME));
     if (!filterUser) return res.send({})
     res.status(200).send(filterUser);
 })
