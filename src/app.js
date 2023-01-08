@@ -44,7 +44,7 @@ app.get("/tweets", (req, res) => {
 })
 
 app.get("/tweets/:USERNAME", (res, req) => {
-    const filterUser = tweets.filter(tweet => tweet.username === parseInt(req.params.USERNAME));
+    const filterUser = tweets.filter(tweet => tweet.username === req.params.USERNAME);
     if (!filterUser) return res.send({})
     res.status(200).send(filterUser);
 })
