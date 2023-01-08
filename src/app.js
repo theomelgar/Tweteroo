@@ -66,10 +66,15 @@ app.get("/tweets", (req, res) => {
     return res.status(200).send(lastTweets);
 })
 
-app.get("/tweets/:USERNAME", (res, req) => {
-    const filterUser = tweets.filter(tweet => tweet.username === req.params.USERNAME);
+app.get("/tweets/:username", (res, req) => {
+    const {username} = req.params.username
+    const filterUser = tweets.filter(tweet => tweet.username === username);
     if (!filterUser) return res.send({})
-    res.status(200).send(filterUser);
+    userTweets = filterUser.map(tweet =>{
+        const user = users.find(user => user.username === tweet.username)
+        return {... tweet, avatar: user.avatar}
+    })
+    res.status(200).send(userTweets);
 })
 
 app.listen(PORT, () => {
