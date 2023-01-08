@@ -67,7 +67,7 @@ app.get("/tweets", (req, res) => {
 })
 
 app.get("/tweets/:username", (res, req) => {
-    const {username} = req.params.username
+    const {username} = req.params
     const filterUser = tweets.filter(tweet => tweet.username === username);
     userTweets = filterUser.map(tweet =>{
         const user = users.find(user => user.username === tweet.username)
