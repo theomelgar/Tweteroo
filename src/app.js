@@ -73,8 +73,9 @@ app.get("/tweets/:username", (res, req) => {
         const user = users.find(user => user.username === tweet.username)
         return {... tweet, avatar: user.avatar}
     })
-    res.status(200).send(userTweets)
+    res.send(userTweets)
 })
+
 
 app.listen(PORT, () => {
     console.log("Servidor Online na porta " + PORT)
