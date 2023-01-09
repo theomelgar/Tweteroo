@@ -38,7 +38,8 @@ app.post("/tweets", (req, res) => {
         return res.status(401).send("UNAUTHORIZED")
     }
     const id = tweets.length+1
-    const avatar = users.find(user => user.username === username && user.avatar)
+    const findAvatar = users.find(user => user.username === username)
+    const avatar = findAvatar.avatar
     const newTweet = { id,username, avatar, tweet }
     tweets.push(newTweet)
     return res.status(201).send("OK")
