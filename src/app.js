@@ -38,7 +38,8 @@ app.post("/tweets", (req, res) => {
         return res.status(401).send("UNAUTHORIZED")
     }
     const id = tweets.length+1
-    const newTweet = { id,username, tweet }
+    const avatar = users.find(user => user.username === username && user.avatar)
+    const newTweet = { id,username, avatar, tweet }
     tweets.push(newTweet)
     return res.status(201).send("OK")
 })
@@ -52,28 +53,16 @@ app.get("/tweets", (req, res) => {
         const tweetsMax = 10
         const start = tweetsMax * page
         const lastTenTweets = tweets.slice(start - tweetsMax, start)
-        const lastTweets = lastTenTweets.map(tweet => {
-            const user = users.find(user => user.username === tweet.username)
-            return { ...tweet, avatar: user.avatar }
-        })
-        return res.status(200).send(lastTweets)
+        return res.status(200).send(lastTenTweets)
     }
     const lastTenTweets = tweets.slice(-10)
-    const lastTweets = lastTenTweets.map(tweet => {
-        const user = users.find(user => user.username === tweet.username)
-        return { ...tweet, avatar: user.avatar }
-    })
-    return res.status(200).send(lastTweets)
+    return res.status(200).send(lastTenTweets)
 })
 
 app.get("/tweets/:username", (req, res) => {
     const {username} = req.params
     const filterUser = tweets.filter(tweet => tweet.username === username)
-    const userTweets = filterUser.map(tweet =>{
-        const user = users.find(user => user.username === tweet.username)
-        return {... tweet, avatar: user.avatar}
-    })
-    res.status(200).send(userTweets)
+    res.status(200).send(filterUser)
 })
 
 
